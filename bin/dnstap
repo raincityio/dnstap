@@ -98,7 +98,7 @@ async def main():
         if not len(lookups) == 0:
             await spanner.add(lookups)
 
-    frameStreamServer = frames.UnixFrameStreamServer("/var/run/bindrev.sock", frame_callback)
+    frameStreamServer = frames.UnixFrameStreamServer("/var/run/dnstap.sock", frame_callback)
     await frameStreamServer.start()
 
     finish = asyncio.Event()
