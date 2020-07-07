@@ -3,7 +3,6 @@
 import asyncio
 import logging
 import ipaddress
-import uvloop
 
 class Tapper:
 

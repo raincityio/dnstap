@@ -1,6 +1,11 @@
 #!/usr/bin/env python3.7
 
 import socket
+import sys
 
 s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-s.connect("/var/run/dnstap.sock")
+try:
+    s.connect("/var/run/dnstap.sock")
+    sys.exit(0)
+except ConnectionRefusedError:
+    sys.exit(1)

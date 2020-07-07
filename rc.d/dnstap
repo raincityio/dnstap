@@ -6,21 +6,19 @@
 
 . /etc/rc.subr
 
+export PATH=/usr/local/bin:$PATH
 name="dnstap"
-rcvar="${name}_enabled"
-start_cmd="${name}_start"
-
-command="/home/drew/bindrev/bin/dnstap"
 pidfile="/var/run/dnstap.pid"
+command="/usr/sbin/daemon"
+command_args="-c -r -t $name -S -T $name -P $pidfile /home/drew/dnstap/bin/dnstap"
+start_postcmd=dnstap_poststart
 
-dnstap_start()
+dnstap_poststart()
 {
-    echo "Starting dnstap"
-    export PATH=/usr/local/bin:$PATH
-    /usr/sbin/daemon -S -T dnstap -c -t dnstap -P $pidfile $command
+    echo "waiting for dnstap to start"
     i=0
-    while ! /home/drew/bindrev/bin/bindrev_client test; do
-        echo "Waiting for server start"
+    while ! /home/drew/dnstap/bin/dnstap_test; do
+    	echo "waiting for dnstap to start"
         sleep 1
         i=`echo $i+1|bc`
         if [ $i -ge 10 ]; then
