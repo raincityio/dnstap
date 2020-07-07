@@ -88,7 +88,7 @@ class Spanner:
         await asyncio.start_server(handle, self.host, self.port)
 
 async def main():
-    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s]: %(message)s')
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s]: %(message)s')
 
     spanner = Spanner()
     await spanner.start()
