@@ -3,6 +3,7 @@
 import asyncio
 import logging
 import ipaddress
+import argparse
 
 class Tapper:
 
@@ -40,10 +41,15 @@ class Tapper:
             await asyncio.sleep(1)
 
 async def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--host', default='127.0.0.1', help='host')
+    parser.add_argument('-p', type=int, default=8765, help='port')
+    args = parser.parse_args()
+
     async def callback(domain, ip):
         print("%s = %s" % (domain, ip))
 
-    tapper = Tapper(callback)
+    tapper = Tapper(callback, host=args.host, port=args.p)
     await tapper.loop()
 
 if __name__ == '__main__':
