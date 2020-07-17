@@ -6,18 +6,26 @@
 
 . /etc/rc.subr
 
+fail() { echo $@>&2; exit 1; }
+
+if [ -f /usr/local/etc/dnstap.rc ]; then
+    . /usr/local/etc/dnstap.rc
+fi
+
+test -n "$DNSTAP_HOME" || fail "DNSTAP_HOME not set"
+
 export PATH=/usr/local/bin:$PATH
 name="dnstap"
 pidfile="/var/run/dnstap.pid"
 command="/usr/sbin/daemon"
-command_args="-c -r -t $name -S -T $name -P $pidfile /home/drew/dnstap/bin/dnstap"
+command_args="-c -r -t $name -S -T $name -P $pidfile $DNSTAP_HOME/bin/dnstap"
 start_postcmd=dnstap_poststart
 
 dnstap_poststart()
 {
     echo "waiting for dnstap to start"
     i=0
-    while ! /home/drew/dnstap/bin/dnstap_test; do
+    while ! $DNSTAP_HOME/bin/dnstap_test; do
     	echo "waiting for dnstap to start"
         sleep 1
         i=`echo $i+1|bc`
