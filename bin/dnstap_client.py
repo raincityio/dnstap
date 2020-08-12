@@ -9,6 +9,10 @@ class Tapper:
 
     def __init__(self, callback, host='127.0.0.1', port=8765):
         self.callback = callback
+        if host is None:
+            host = '127.0.0.1'
+        if port is None:
+            port = 8765
         self.host = host
         self.port = port
 
@@ -42,8 +46,8 @@ class Tapper:
 
 async def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--host', default='127.0.0.1', help='host')
-    parser.add_argument('-p', type=int, default=8765, help='port')
+    parser.add_argument('--host', help='host')
+    parser.add_argument('-p', type=int, help='port')
     args = parser.parse_args()
 
     async def callback(domain, ip):

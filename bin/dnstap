@@ -81,6 +81,10 @@ class Spanner:
                         writer.write(ip_sz)
                         writer.write(ip.packed)
                         await writer.drain()
+            except asyncio.CancelledError:
+                raise
+            except Exception as e:
+                logging.error(e)
             finally:
                 self.queues.remove(queue)
                 writer.close()
@@ -89,6 +93,26 @@ class Spanner:
 
 async def main():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s]: %(message)s')
+
+    loop = asyncio.get_event_loop()
+
+    finish = asyncio.Event()
+
+    def signal_handler(*args):
+        finish.set()
+    loop = asyncio.get_event_loop()
+    loop.add_signal_handler(signal.SIGINT, signal_handler)
+    loop.add_signal_handler(signal.SIGTERM, signal_handler)
+
+    uncaught_exception = None
+    def uncaught_handler(loop, context):
+        nonlocal uncaught_exception
+        if 'exception' in context:
+            uncaught_exception = context['exception']
+        else:
+            uncaught_exception = Exception(context['message'])
+        finish.set()
+    loop.set_exception_handler(uncaught_handler)
 
     spanner = Spanner()
     await spanner.start()
@@ -101,13 +125,9 @@ async def main():
     frameStreamServer = frames.UnixFrameStreamServer("/var/run/dnstap.sock", frame_callback)
     await frameStreamServer.start()
 
-    finish = asyncio.Event()
-    def signal_handler(*args):
-        finish.set()
-    loop = asyncio.get_event_loop()
-    loop.add_signal_handler(signal.SIGINT, signal_handler)
-    loop.add_signal_handler(signal.SIGTERM, signal_handler)
     await finish.wait()
+    if uncaught_exception is not None:
+        raise uncaught_exception
 
 if __name__ == "__main__":
     asyncio.run(main())
