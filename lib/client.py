@@ -55,6 +55,3 @@ async def main():
 
     tapper = Tapper(callback, host=args.host, port=args.p)
     await tapper.loop()
-
-if __name__ == '__main__':
-    asyncio.run(main())

@@ -3,6 +3,6 @@
 import asyncio
 import sys
 
-from dnstap.main import main
+from dnstap.client import main
 
 sys.exit(asyncio.run(main()))

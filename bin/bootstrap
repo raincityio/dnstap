@@ -1,0 +1,10 @@
+#!/bin/sh
+
+sudo pkg install py37-protobuf
+sudo pkg install py37-dnspython
+
+local=${HOME}/.local/lib/python3.7/site-packages
+
+mkdir -p $local
+
+ln -s /home/drew/dnstap/lib $local/dnstap
