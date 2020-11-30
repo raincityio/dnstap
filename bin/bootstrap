@@ -9,7 +9,7 @@ pip-$pyver install --user dnspython
 
 pkgpath=$(realpath $(dirname $0)/..)
 
-local=${HOME}/.local/lib/python$pyver/site-packages
+local=${HOME}/.local/lib/python3.7/site-packages/
 
 mkdir -p $local
 

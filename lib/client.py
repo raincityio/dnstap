@@ -7,7 +7,7 @@ import argparse
 
 class Tapper:
 
-    def __init__(self, callback, host='127.0.0.1', port=8765):
+    def __init__(self, callback, *, host=None, port=None):
         self.callback = callback
         if host is None:
             host = '127.0.0.1'
