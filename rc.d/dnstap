@@ -4,38 +4,32 @@
 # REQUIRE: NETWORKING ldconfig syslogd
 # BEFORE: named
 
+export PATH=/usr/local/bin:$PATH
+
 . /etc/rc.subr
 
-load_rc_config $name
-
-fail() { echo $@>&2; exit 1; }
-
-test -n "$dnstap_home" || fail "dnstap_home not defined"
-
 name="dnstap"
-pidfile="/var/run/dnstap.pid"
+rcvar="${name}_enable"
+pidfile="/var/run/$name.pid"
 command="/usr/sbin/daemon"
-command_args="-c -r -t $name -S -T $name -P $pidfile $dnstap_home/bin/dnstap"
+command_args="-c -r -t $name -S -T $name -P $pidfile /usr/local/dnstap/bin/dnstap"
 start_postcmd=dnstap_poststart
 
 dnstap_poststart()
 {
-    ps ax > /foo
     echo "waiting for dnstap to start"
     i=0
-    while ! $dnstap_home/bin/dnstap_test; do
+    while ! /usr/local/dnstap/bin/dnstap_test; do
     	echo "waiting for dnstap to start"
         sleep 1
         i=`echo $i+1|bc`
         if [ $i -ge 10 ]; then
-            echo "Server did not appear to start"
+            echo "server did not appear to start"
             exit 1
         fi
     done
-    sleep 5
     echo "ready"
 }
 
-export PATH=/usr/local/bin:$PATH
-
+load_rc_config $name
 run_rc_command "$1"
