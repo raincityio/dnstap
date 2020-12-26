@@ -5,6 +5,7 @@
 # BEFORE: named
 
 export PATH=/usr/local/bin:$PATH
+export PYTHONPATH=/usr/local/dnstap/lib
 
 . /etc/rc.subr
 
@@ -19,7 +20,7 @@ dnstap_poststart()
 {
     echo "waiting for dnstap to start"
     i=0
-    while ! /usr/local/dnstap/bin/dnstap_test; do
+    while ! /usr/local/dnstap/bin/dnstap-test; do
     	echo "waiting for dnstap to start"
         sleep 1
         i=`echo $i+1|bc`
